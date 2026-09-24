@@ -1,1 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desenvolvimento Software & Questões de Concurso</title>
+    <!-- Google Fonts para tipografia moderna -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-startr;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px; /* Aumentado para acomodar os dois menus lado a lado */
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .header-icon {
+            font-size: 54px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        p.subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Layout para colocar os menus lado a lado */
+        .menus-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .menus-wrapper {
+                grid-template-columns: 1fr; /* Empilha em telas menores */
+            }
+        }
+
+        .menu-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-column h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Menu Dropdown Estilizado */
+        .dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .btn-main {
+            width: 100%;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 14px 18px;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-main.btn-flashcard {
+            background-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .btn-main.btn-flashcard:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .arrow {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        /* Animação do Painel Dropdown */
+        .dropdown-content {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 380px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dropdown.active .dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown.active .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Campo de Busca Dentro do Menu */
+        .search-box {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Links do Menu */
+        .menu-list {
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .dropdown-content a {
+            color: var(--text-dark);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 500;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s, color 0.2s;
+            text-align: left;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f0f9ff;
+            color: var(--primary);
+            padding-left: 20px;
+        }
+
+        .tag {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .tag-flashcard {
+            background: #d1fae5;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-icon">📚</div>
+        <h1>Desenvolvimento Software & Questões</h1>
+        <p class="subtitle">Selecione um módulo ou flashcard para iniciar seus estudos</p>
+
+        <div class="menus-wrapper">
+            <!-- Menu 1: Módulos de Questões/Conteúdo -->
+            <div class="menu-column">
+                <h3>Módulos de Estudo</h3>
+                <div class="dropdown" id="dropdownModulos">
+                    <button class="btn-main" onclick="toggleDropdown('dropdownModulos')">
+                        <span>Selecione o Módulo</span>
+                        <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="dropdown-content">
+                        <div class="search-box">
+                            <input type="text" id="searchModulos" placeholder="Filtrar módulos..." onkeyup="filterMenu('searchModulos', 'listModulos')">
+                        </div>
+                        <div class="menu-list" id="listModulos">
+                            <a href="flash_ArqHexagonal_Microserviços_TransDistribuidas.html"><span>ArqHexagonal_Microserviços_TransDistribuidas</span><span class="tag">Português</span></a>
+                            <a href="flash_Arquitura_software_Webservices.html"><span>Arquitura_Software_Webservices</span><span class="tag">Português</span></a>
+                            <a href="palavras_expressões.html"><span>Significação Contextual Palavras e Expressões</span><span class="tag">Português</span></a>
+                            <a href="equivalência_transformação.html"><span>Equivalência e Transformação de Estruturas</span><span class="tag">Português</span></a>
+                            <a href="sintaxe_construção.html"><span>Sintaxe e Construção Frasal</span><span class="tag">Português</span></a>
+                            <a href="coordenação_subordinação.html"><span>Sintaxe Processos de Coordenação e Subordinação</span><span class="tag">Português</span></a>
+                            <a href="modosverbais.html"><span>Emprego de Tempos e Modos Verbais</span><span class="tag">Português</span></a>
+                            <a href="pontuacao.html"><span>Pontuação</span><span class="tag">Português</span></a>
+                            <a href="concordancianominalverbal.html"><span>Concordância Nominal e Verbal</span><span class="tag">Português</span></a>
+                            <a href="regenciaverbalnominal.html"><span>Regência Verbal e Nominal</span><span class="tag">Português</span></a>
+                            <a href="formastratamentocolocacao.html"><span>Pronomes: emprego, formas de tratamento e colocação</span><span class="tag">Português</span></a>
+                            <a href="morfologiapalavras.html"><span>Morfologia Estrutura das Palavras</span><span class="tag">Português</span></a>
+                            <a href="formacaopalavras.html"><span>Estrutura e Formação de Palavras</span><span class="tag">Português</span></a>
+                            <a href="classepalavras.html"><span>Funções das Classes de Palavras</span><span class="tag">Português</span></a>
+                            <a href="flexaonominalverbal.html"><span>Flexão Nominal e Verbal</span><span class="tag">Português</span></a>
+                            <a href="normapadrao.html"><span>Norma Padrão Língua Portuguesa</span><span class="tag">Português</span></a>
+                            <a href="Governança_COBIT_2019.html"><span>Governança COBIT 2019</span><span class="tag">Gestão & Governança TI</span></a>
+                            <a href="Gerenciamento_serviços_ITIL.html"><span>Gerenciamento Serviços ITIL v4</span><span class="tag">Gestão & Governança TI</span></a>
+                            <a href="scrum_lean_kanban.html"><span>SCRUM LEAN KANBAN </span><span class="tag">Gestão & Governança TI </span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu 2: Flashcards -->
+            <div class="menu-column">
+                <h3>Flashcards de Revisão</h3>
+                <div class="dropdown" id="dropdownFlashcards">
+                    <button class="btn-main btn-flashcard" onclick="toggleDropdown('dropdownFlashcards')">
+                        <span>Selecione o Flashcard</span>
+                        <span class="arrow">▼</span>
+                    </button>
+                    
+                    <div class="dropdown-content">
+                        <div class="search-box">
+                            <input type="text" id="searchFlashcards" placeholder="Filtrar flashcards..." onkeyup="filterMenu('searchFlashcards', 'listFlashcards')">
+                        </div>
+                        <div class="menu-list" id="listFlashcards">
+                            <!-- Altere os links "href" abaixo para as páginas de flashcards que você criar -->
+                            <a href="flash_ArqHexagonal_Microserviços_TransDistribuidas.html"><span>ArqHexagonal_Microserviços_TransDistribuidas</span><span class="tag">Flash</span></a>
+                            <a href="flash_Arquitura_software_Webservices.html"><span>Arquitura_Software_Webservices</span><span class="tag">Flash</span></a>
+                            <a href="flash_BancoDados_NoSQL.htmll"><span>BancoDados_NoSQL</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_DDL_DML.html"><span>Linguagem Manipulação e DDL_DML</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_BPMN_Modelagem_Processos.html"><span>BPMN_Modelagem_Processos</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_Dados_Estruturados_NãoEstruturados.html"><span>Dados_Estruturados_Não_Estruturados</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_DataLakes_BigData.html"><span>Data_Lakes e Big_Data</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_DataWareHouse_ETL_OLAP.html"><span>DataWareHouse_ETL_OLAP</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_Desenvolvimento_mobile_android_iOs.html"><span>Desenvolvimento_mobile_android_iOs</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_GestãoGIT_Testes.html"><span>Gestão GIT_Testes</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_GovernançaTI_GestãoRiscos.html"><span>Governança TI_Gestão de Riscos</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_Ingestão_Integração_ETL_ELT.html"><span>Ingestão_Integração_ETL_ELT</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_Itil_v4.html"><span>ITIL_v4</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_Java_v6.html"><span>JAVA_v6</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_formacaopalavras.html"><span>Estrutura e Formação de Palavras</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_classepalavras.html"><span>Funções das Classes de Palavras</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_flexaonominalverbal.html"><span>Flexão Nominal e Verbal</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_normapadrao.html"><span>Norma Padrão Língua Portuguesa</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_ortografia.html"><span>Ortografia oficial</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_Governanç_COBIT_2019.html"><span>Governança COBIT 2019</span><span class="tag tag-flashcard">Flash</span></a>
+                            <a href="flash_gerenciamento_serviços ITIL.html"><span>Gerenciamento Serviços ITIL V4</span><span class="tag tag-flashcard">Flash</span></a>
+                             <a href="flash_scrum_lean_kanban.html"><span> SCRUM  LEAN  KANBAN</span><span class="tag tag-flashcard">Flash</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para alternar o dropdown alvo e fechar os outros
+        function toggleDropdown(dropdownId) {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(item => {
+                if (item.id === dropdownId) {
+                    item.classList.toggle('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Fechar os menus caso clique fora da área de qualquer dropdown
+        window.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // Função de filtro dinâmica reutilizável para cada menu
+        function filterMenu(inputId, listId) {
+            const input = document.getElementById(inputId).value.toLowerCase();
+            const links = document.getElementById(listId).getElementsByTagName('a');
+
+            for (let i = 0; i < links.length; i++) {
+                const text = links[i].textContent || links[i].innerText;
+                if (text.toLowerCase().indexOf(input) > -1) {
+                    links[i].style.display = "flex";
+                } else {
+                    links[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
